@@ -1,0 +1,229 @@
+.features-section {
+  padding: 120px 24px;
+  background: linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.5) 100%);
+}
+
+.features-container {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.features-header {
+  text-align: center;
+  margin-bottom: 80px;
+}
+
+.features-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%);
+  border: 1px solid #93c5fd;
+  padding: 6px 20px;
+  border-radius: 100px;
+  color: #1e40af;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 24px;
+}
+
+.features-title {
+  font-size: 48px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 16px;
+}
+
+.features-description {
+  font-size: 20px;
+  color: #64748b;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 32px;
+}
+
+.feature-card {
+  background: white;
+  border-radius: 20px;
+  padding: 40px 32px;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.04);
+  border: 2px solid transparent;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: fadeInUp 0.6s ease backwards;
+  cursor: pointer;
+}
+
+.feature-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+}
+
+.feature-card-blue:hover {
+  border-color: #3b82f6;
+  background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%);
+}
+
+.feature-card-indigo:hover {
+  border-color: #6366f1;
+  background: linear-gradient(135deg, #ffffff 0%, #eef2ff 100%);
+}
+
+.feature-card-violet:hover {
+  border-color: #8b5cf6;
+  background: linear-gradient(135deg, #ffffff 0%, #f5f3ff 100%);
+}
+
+.feature-card-cyan:hover {
+  border-color: #06b6d4;
+  background: linear-gradient(135deg, #ffffff 0%, #ecfeff 100%);
+}
+
+.feature-card-purple:hover {
+  border-color: #a855f7;
+  background: linear-gradient(135deg, #ffffff 0%, #faf5ff 100%);
+}
+
+.feature-card-green:hover {
+  border-color: #10b981;
+  background: linear-gradient(135deg, #ffffff 0%, #ecfdf5 100%);
+}
+
+.feature-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  transition: all 0.4s ease;
+}
+
+.feature-icon svg {
+  width: 32px;
+  height: 32px;
+}
+
+.feature-icon-blue {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+}
+
+.feature-icon-indigo {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  color: white;
+}
+
+.feature-icon-violet {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  color: white;
+}
+
+.feature-icon-cyan {
+  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+  color: white;
+}
+
+.feature-icon-purple {
+  background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+  color: white;
+}
+
+.feature-icon-green {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+}
+
+.feature-card:hover .feature-icon {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.feature-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 12px;
+}
+
+.feature-description {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #64748b;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .features-section {
+    padding: 80px 24px;
+  }
+  
+  .features-header {
+    margin-bottom: 60px;
+  }
+  
+  .features-title {
+    font-size: 36px;
+  }
+  
+  .features-description {
+    font-size: 18px;
+  }
+  
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  
+  .feature-card {
+    padding: 32px 24px;
+  }
+  
+  .feature-icon {
+    width: 56px;
+    height: 56px;
+  }
+  
+  .feature-icon svg {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .feature-title {
+    font-size: 20px;
+  }
+  
+  .feature-description {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .features-section {
+    padding: 60px 16px;
+  }
+  
+  .features-title {
+    font-size: 28px;
+  }
+  
+  .features-description {
+    font-size: 16px;
+  }
+}
