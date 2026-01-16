@@ -31,8 +31,8 @@ export function QueryInput({ onSubmit, isProcessing }: QueryInputProps) {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-      <h2 className="font-semibold text-slate-900 mb-4">Ask a Question</h2>
+    <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+      <h2 className="font-semibold text-slate-900 dark:text-white mb-4">Ask a Question</h2>
       
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="relative">
@@ -40,7 +40,7 @@ export function QueryInput({ onSubmit, isProcessing }: QueryInputProps) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Enter your query here... The system will analyze it using the EPC framework and provide a structured, explainable response."
-            className="w-full px-4 py-3 pr-12 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+            className="w-full px-4 py-3 pr-12 border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:placeholder-slate-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
             rows={4}
             disabled={isProcessing}
           />
@@ -58,7 +58,7 @@ export function QueryInput({ onSubmit, isProcessing }: QueryInputProps) {
         </div>
 
         <div>
-          <p className="text-xs text-slate-600 mb-2">Try these sample queries:</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400 mb-2">Try these sample queries:</p>
           <div className="flex flex-wrap gap-2">
             {sampleQueries.map((sample, index) => (
               <button
@@ -66,7 +66,7 @@ export function QueryInput({ onSubmit, isProcessing }: QueryInputProps) {
                 type="button"
                 onClick={() => handleSampleClick(sample)}
                 disabled={isProcessing}
-                className="px-3 py-1.5 text-xs bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed border border-slate-200"
+                className="px-3 py-1.5 text-xs bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed border border-slate-200 dark:border-slate-600"
               >
                 {sample}
               </button>
