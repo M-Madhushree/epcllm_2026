@@ -5,6 +5,7 @@ import { ReasoningVisualization } from './ReasoningVisualization';
 import { QueryHistory } from './QueryHistory';
 import { ThemeToggle } from './ThemeToggle';
 import { Brain, Home } from 'lucide-react';
+import { askEpcBackend } from '../api/epcBackend';
 
 import './MainApp.css';
 
@@ -34,47 +35,96 @@ export function MainApp() {
 
   const handleQuerySubmit = async (query: string) => {
     setIsProcessing(true);
-    await new Promise(resolve => setTimeout(resolve, 2000));
 
-    const result = generateMockResult(query);
-    setCurrentResult(result);
-    setHistory(prev => [result, ...prev]);
-    setIsProcessing(false);
+    try {
+      const aiAnswer = await askEpcBackend(query);
+
+      const result: QueryResult = {
+        id: Date.now().toString(),
+        query,
+        timestamp: new Date(),
+        epcSteps: [
+          {
+            event: 'User query received',
+            process: 'Parse and classify query',
+            condition: 'Query is valid and EPC-relevant',
+            reasoning: [
+              'Detected pre-construction context',
+              'Identified structural design intent',
+            ],
+          },
+          {
+            event: 'Context retrieval triggered',
+            process: 'Retrieve relevant EPC domain knowledge',
+            condition: 'Relevant knowledge available',
+            reasoning: [
+              'Matched cost vs safety considerations',
+              'Retrieved pre-construction risk factors',
+            ],
+          },
+          {
+            event: 'AI reasoning executed',
+            process: 'Apply conservative engineering reasoning',
+            condition: 'Safety-first constraints satisfied',
+            reasoning: [
+              'Evaluated serviceability and deflection risks',
+              'Balanced cost savings against long-term risks',
+            ],
+          },
+        ],
+        finalAnswer: aiAnswer,
+        confidence: 0.85, // static for demo safety
+      };
+
+      setCurrentResult(result);
+      setHistory(prev => [result, ...prev]);
+
+    } catch (error) {
+      console.error(error);
+      alert('Failed to get response from EPC backend.');
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
     <div className="app-container">
 
       {/* Header */}
-      <header className="app-header">
-        <div className="app-header-inner">
-
-          <div className="app-logo">
-            <div className="app-logo-icon">
-              <Brain size={20} />
+      <header className="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+              <Brain className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="app-title">EPC Reasoning Engine</h1>
-              <p className="app-subtitle">Event-Process-Condition Framework</p>
+              <h1 className="text-xl font-semibold text-slate-900">
+                EPC Reasoning Engine
+              </h1>
+              <p className="text-sm text-slate-600">
+                Event-Process-Condition Framework
+              </p>
             </div>
           </div>
 
-          <div className="app-actions">
+          <div className="flex items-center gap-3">
             <ThemeToggle />
             <button onClick={handleBackToHome} className="app-back-btn">
               <Home size={16} /> Back to Home
             </button>
           </div>
-
         </div>
       </header>
 
-      {/* Main content */}
-      <main className="app-main">
-        <div className="app-grid">
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-6 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 space-y-6">
+            <QueryInput
+              onSubmit={handleQuerySubmit}
+              isProcessing={isProcessing}
+            />
 
-          <div className="app-left">
-            <QueryInput onSubmit={handleQuerySubmit} isProcessing={isProcessing} />
             {(currentResult || isProcessing) && (
               <ReasoningVisualization
                 result={currentResult}
@@ -83,44 +133,14 @@ export function MainApp() {
             )}
           </div>
 
-          <div className="app-right">
-            <QueryHistory history={history} onSelect={setCurrentResult} />
+          <div className="lg:col-span-1">
+            <QueryHistory
+              history={history}
+              onSelect={setCurrentResult}
+            />
           </div>
-
         </div>
       </main>
     </div>
   );
-}
-
-/* Mock generator */
-function generateMockResult(query: string): QueryResult {
-  return {
-    id: Date.now().toString(),
-    query,
-    timestamp: new Date(),
-    epcSteps: [
-      {
-        event: 'User query received',
-        process: 'Parse and tokenize input query',
-        condition: 'Query complexity analyzed',
-        reasoning: [
-          'Identified key entities',
-          'Detected intent',
-          'Selected strategy'
-        ]
-      },
-      {
-        event: 'Context analysis',
-        process: 'Retrieve domain knowledge',
-        condition: 'Relevance > 0.8',
-        reasoning: [
-          'Matched sources',
-          'Filtered noise'
-        ]
-      }
-    ],
-    finalAnswer: `Structured EPC reasoning applied to "${query}".`,
-    confidence: 0.92
-  };
 }
