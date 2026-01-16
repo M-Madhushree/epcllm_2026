@@ -1,5 +1,6 @@
 import { CheckCircle2, Circle, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
-import type { QueryResult } from '../App';
+import type { QueryResult } from '../types/query';
+import "./ReasoningVisualization.css";
 
 interface ReasoningVisualizationProps {
   result: QueryResult | null;
@@ -7,18 +8,20 @@ interface ReasoningVisualizationProps {
 }
 
 export function ReasoningVisualization({ result, isProcessing }: ReasoningVisualizationProps) {
+
   if (isProcessing) {
     return (
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-8">
-        <div className="flex items-center justify-center gap-3 text-blue-600">
-          <Loader2 className="w-6 h-6 animate-spin" />
-          <span className="font-medium">Processing query through EPC framework...</span>
+      <div className="rv-card rv-loading">
+        <div className="rv-loading-row">
+          <Loader2 className="rv-spinner" />
+          <span>Processing query through EPC framework...</span>
         </div>
-        <div className="mt-6 space-y-3">
-          {[1, 2, 3, 4].map((step) => (
-            <div key={step} className="flex items-center gap-3 animate-pulse">
-              <div className="w-8 h-8 bg-slate-200 rounded-full"></div>
-              <div className="flex-1 h-4 bg-slate-200 rounded"></div>
+
+        <div className="rv-skeleton">
+          {[1,2,3,4].map(i => (
+            <div key={i} className="rv-skeleton-row">
+              <div className="rv-skeleton-circle"></div>
+              <div className="rv-skeleton-line"></div>
             </div>
           ))}
         </div>
@@ -29,122 +32,81 @@ export function ReasoningVisualization({ result, isProcessing }: ReasoningVisual
   if (!result) return null;
 
   return (
-    <div className="space-y-6">
-      {/* EPC Steps */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-        <h2 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
-          <Circle className="w-5 h-5 text-blue-600" />
-          Reasoning Process
+    <div className="rv-wrapper">
+
+      <div className="rv-card">
+        <h2 className="rv-title">
+          <Circle size={18}/> Reasoning Process
         </h2>
 
-        <div className="space-y-4">
-          {result.epcSteps.map((step, index) => (
-            <div key={index} className="relative">
-              {/* Step Container */}
-              <div className="bg-gradient-to-r from-slate-50 to-white border border-slate-200 rounded-lg p-4">
-                <div className="flex items-start gap-3 mb-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 text-white rounded-full flex items-center justify-center font-semibold text-sm">
-                    {index + 1}
-                  </div>
-                  <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-3">
-                    {/* Event */}
-                    <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
-                      <div className="text-xs font-semibold text-blue-700 mb-1 uppercase tracking-wide">
-                        Event
-                      </div>
-                      <div className="text-sm text-slate-900">{step.event}</div>
-                    </div>
+        {result.epcSteps.map((step, index) => (
+          <div key={index} className="rv-step">
 
-                    {/* Arrow */}
-                    <div className="hidden md:flex items-center justify-center">
-                      <ArrowRight className="w-5 h-5 text-slate-400" />
-                    </div>
+            <div className="rv-step-header">
+              <div className="rv-step-number">{index+1}</div>
 
-                    {/* Process */}
-                    <div className="bg-indigo-50 rounded-lg p-3 border border-indigo-200 md:col-start-2">
-                      <div className="text-xs font-semibold text-indigo-700 mb-1 uppercase tracking-wide">
-                        Process
-                      </div>
-                      <div className="text-sm text-slate-900">{step.process}</div>
-                    </div>
+              <div className="rv-step-grid">
 
-                    {/* Arrow */}
-                    <div className="hidden md:flex items-center justify-center">
-                      <ArrowRight className="w-5 h-5 text-slate-400" />
-                    </div>
-
-                    {/* Condition */}
-                    <div className="bg-violet-50 rounded-lg p-3 border border-violet-200 md:col-start-3">
-                      <div className="text-xs font-semibold text-violet-700 mb-1 uppercase tracking-wide">
-                        Condition
-                      </div>
-                      <div className="text-sm text-slate-900">{step.condition}</div>
-                    </div>
-                  </div>
+                <div className="rv-box event">
+                  <b>Event</b>
+                  <p>{step.event}</p>
                 </div>
 
-                {/* Reasoning Details */}
-                <div className="ml-11 bg-white rounded-lg p-3 border border-slate-200">
-                  <div className="text-xs font-semibold text-slate-600 mb-2 uppercase tracking-wide">
-                    Detailed Reasoning
-                  </div>
-                  <ul className="space-y-1.5">
-                    {step.reasoning.map((reason, rIndex) => (
-                      <li key={rIndex} className="flex items-start gap-2 text-sm text-slate-700">
-                        <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
-                        <span>{reason}</span>
-                      </li>
-                    ))}
-                  </ul>
+                <ArrowRight className="rv-arrow"/>
+
+                <div className="rv-box process">
+                  <b>Process</b>
+                  <p>{step.process}</p>
                 </div>
+
+                <ArrowRight className="rv-arrow"/>
+
+                <div className="rv-box condition">
+                  <b>Condition</b>
+                  <p>{step.condition}</p>
+                </div>
+
               </div>
-
-              {/* Connector Line */}
-              {index < result.epcSteps.length - 1 && (
-                <div className="flex justify-center py-2">
-                  <div className="w-0.5 h-6 bg-gradient-to-b from-blue-400 to-indigo-400"></div>
-                </div>
-              )}
             </div>
-          ))}
+
+            <div className="rv-reasoning">
+              <b>Detailed Reasoning</b>
+              <ul>
+                {step.reasoning.map((r,i)=>(
+                  <li key={i}>
+                    <CheckCircle2 size={14}/> {r}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {index < result.epcSteps.length-1 && <div className="rv-connector"></div>}
+          </div>
+        ))}
+      </div>
+
+      <div className="rv-final">
+        <div className="rv-final-header">
+          <CheckCircle2/>
+          <h3>Final Answer</h3>
+        </div>
+
+        <div className="rv-confidence">
+          <span>Confidence:</span>
+          <div className="rv-bar">
+            <div className="rv-bar-fill" style={{width:`${result.confidence*100}%`}}/>
+          </div>
+          <span>{(result.confidence*100).toFixed(1)}%</span>
+        </div>
+
+        <div className="rv-answer">{result.finalAnswer}</div>
+
+        <div className="rv-note">
+          <AlertCircle size={14}/>
+          Generated through {result.epcSteps.length} EPC stages
         </div>
       </div>
 
-      {/* Final Answer */}
-      <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl shadow-sm border border-green-200 p-6">
-        <div className="flex items-start gap-3 mb-4">
-          <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center flex-shrink-0">
-            <CheckCircle2 className="w-6 h-6 text-white" />
-          </div>
-          <div className="flex-1">
-            <h3 className="font-semibold text-slate-900 mb-1">Final Answer</h3>
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-slate-600">Confidence Score:</span>
-              <div className="flex-1 max-w-xs h-2 bg-white rounded-full overflow-hidden border border-green-300">
-                <div 
-                  className="h-full bg-gradient-to-r from-green-500 to-emerald-500 transition-all duration-1000"
-                  style={{ width: `${result.confidence * 100}%` }}
-                ></div>
-              </div>
-              <span className="text-sm font-semibold text-green-700">
-                {(result.confidence * 100).toFixed(1)}%
-              </span>
-            </div>
-          </div>
-        </div>
-        
-        <div className="bg-white rounded-lg p-4 border border-green-200">
-          <p className="text-slate-700 leading-relaxed">{result.finalAnswer}</p>
-        </div>
-
-        <div className="mt-4 flex items-start gap-2 text-xs text-slate-600 bg-white rounded-lg p-3 border border-green-200">
-          <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-          <p>
-            This answer was generated through {result.epcSteps.length} distinct EPC reasoning stages, 
-            each validated against logical conditions and domain knowledge.
-          </p>
-        </div>
-      </div>
     </div>
   );
 }

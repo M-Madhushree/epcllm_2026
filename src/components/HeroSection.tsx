@@ -1,7 +1,8 @@
 import { Brain, ArrowRight, Play, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { ThemeToggle } from './ThemeToggle';
 import './HeroSection.css';
-
+import Typewriter from './Typewriter';
 interface HeroSectionProps {
   onGetStarted: () => void;
 }
@@ -36,6 +37,7 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
             </a>
             <a href="#how-it-works" className="hero-nav-link">How It Works</a>
             <a href="#about" className="hero-nav-link">About</a>
+            <ThemeToggle />
             <button className="hero-nav-login" onClick={handleLogin}>
               Login
             </button>
@@ -62,10 +64,12 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
         </div>
 
         <h1 className="hero-title">
-          Intelligent Decision-Making
-          <br />
-          <span className="hero-title-gradient">Through Transparent Reasoning</span>
-        </h1>
+  <Typewriter text="Intelligent Decision-Making" speed = {50} />
+  <br />
+  <span className="hero-title-gradient">
+    <Typewriter text="Through Transparent Reasoning" speed={50} />
+  </span>
+</h1>
 
         <p className="hero-description">
           Experience AI that doesn't just give answers—it shows you how it thinks. 

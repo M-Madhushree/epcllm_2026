@@ -2,6 +2,19 @@
   padding: 120px 24px;
   background: linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.5) 100%);
 }
+/* Scroll animation base state */
+.fade-section {
+  opacity: 0;
+  transform: translateY(100px);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+
+/* When visible */
+.fade-section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 
 .features-container {
   max-width: 1280px;
@@ -56,6 +69,18 @@
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   animation: fadeInUp 0.6s ease backwards;
   cursor: pointer;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s ease;
+}
+.feature-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.dark .feature-card {
+  background: #334155;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.3);
 }
 
 .feature-card:hover {
@@ -63,9 +88,18 @@
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
 }
 
+.dark .feature-card:hover {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
 .feature-card-blue:hover {
   border-color: #3b82f6;
   background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%);
+}
+
+.dark .feature-card-blue:hover {
+  border-color: #3b82f6;
+  background: linear-gradient(135deg, #334155 0%, #1e3a8a 100%);
 }
 
 .feature-card-indigo:hover {
@@ -73,9 +107,19 @@
   background: linear-gradient(135deg, #ffffff 0%, #eef2ff 100%);
 }
 
+.dark .feature-card-indigo:hover {
+  border-color: #6366f1;
+  background: linear-gradient(135deg, #334155 0%, #312e81 100%);
+}
+
 .feature-card-violet:hover {
   border-color: #8b5cf6;
   background: linear-gradient(135deg, #ffffff 0%, #f5f3ff 100%);
+}
+
+.dark .feature-card-violet:hover {
+  border-color: #8b5cf6;
+  background: linear-gradient(135deg, #334155 0%, #5b21b6 100%);
 }
 
 .feature-card-cyan:hover {
@@ -83,14 +127,29 @@
   background: linear-gradient(135deg, #ffffff 0%, #ecfeff 100%);
 }
 
+.dark .feature-card-cyan:hover {
+  border-color: #06b6d4;
+  background: linear-gradient(135deg, #334155 0%, #155e75 100%);
+}
+
 .feature-card-purple:hover {
   border-color: #a855f7;
   background: linear-gradient(135deg, #ffffff 0%, #faf5ff 100%);
 }
 
+.dark .feature-card-purple:hover {
+  border-color: #a855f7;
+  background: linear-gradient(135deg, #334155 0%, #6b21a8 100%);
+}
+
 .feature-card-green:hover {
   border-color: #10b981;
   background: linear-gradient(135deg, #ffffff 0%, #ecfdf5 100%);
+}
+
+.dark .feature-card-green:hover {
+  border-color: #10b981;
+  background: linear-gradient(135deg, #334155 0%, #065f46 100%);
 }
 
 .feature-icon {
@@ -150,10 +209,18 @@
   margin-bottom: 12px;
 }
 
+.dark .feature-title {
+  color: #f1f5f9;
+}
+
 .feature-description {
   font-size: 16px;
   line-height: 1.6;
   color: #64748b;
+}
+
+.dark .feature-description {
+  color: #cbd5e1;
 }
 
 /* Animations */

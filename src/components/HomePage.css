@@ -2,14 +2,99 @@
   min-height: 100vh;
   background: linear-gradient(180deg, #f8fafc 0%, #e0e7ff 100%);
   overflow-x: hidden;
+  position: relative;
 }
 
-/* Smooth scrolling for the entire page */
-html {
-  scroll-behavior: smooth;
+.dark .home-page {
+  background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
 }
 
-/* Ensure all sections are accessible */
-section {
-  scroll-margin-top: 80px;
+/* Animated Background Pattern */
+.home-page::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image:
+    linear-gradient(
+      90deg,
+      rgba(59, 130, 246, 0.03) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      rgba(59, 130, 246, 0.03) 1px,
+      transparent 1px
+    );
+  background-size: 50px 50px;
+  animation: gridMove 20s linear infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.dark .home-page::before {
+  background-image:
+    linear-gradient(
+      90deg,
+      rgba(59, 130, 246, 0.08) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      rgba(59, 130, 246, 0.08) 1px,
+      transparent 1px
+    );
+}
+
+/* Animated Dots Pattern */
+.home-page::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(
+    circle,
+    rgba(99, 102, 241, 0.15) 1px,
+    transparent 1px
+  );
+  background-size: 40px 40px;
+  animation: dotsPulse 4s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.dark .home-page::after {
+  background-image: radial-gradient(
+    circle,
+    rgba(99, 102, 241, 0.25) 1px,
+    transparent 1px
+  );
+}
+
+/* Ensure content is above background */
+.home-page > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Animations */
+@keyframes gridMove {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 50px 50px;
+  }
+}
+
+@keyframes dotsPulse {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
 }

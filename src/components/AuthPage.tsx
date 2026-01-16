@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SignInForm } from './SignInForm';
 import { SignUpForm } from './SignUpForm';
+import { ThemeToggle } from './ThemeToggle';
 import { Brain, ArrowLeft } from 'lucide-react';
 import './AuthPage.css';
 
@@ -23,10 +24,13 @@ export function AuthPage() {
 
   return (
     <div className="auth-page">
-      <button onClick={handleBackToHome} className="auth-back-button">
-        <ArrowLeft />
-        <span>Back to Home</span>
-      </button>
+      <div className="auth-page-header">
+        <button onClick={handleBackToHome} className="auth-back-button">
+          <ArrowLeft />
+          <span>Back to Home</span>
+        </button>
+        <ThemeToggle />
+      </div>
 
       <div className="auth-container">
         {/* Left Side - Branding */}
