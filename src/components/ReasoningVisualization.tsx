@@ -1,12 +1,16 @@
 import { Loader2, CheckCircle2 } from 'lucide-react';
-import type { QueryResult } from '../App';
+import type { QueryResult } from './MainApp';
 
 interface ReasoningVisualizationProps {
   result: QueryResult | null;
   isProcessing: boolean;
 }
 
-export function ReasoningVisualization({ result, isProcessing }: ReasoningVisualizationProps) {
+export function ReasoningVisualization({
+  result,
+  isProcessing,
+}: ReasoningVisualizationProps) {
+
   if (isProcessing) {
     return (
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-8">

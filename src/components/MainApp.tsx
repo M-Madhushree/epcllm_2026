@@ -3,8 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { QueryInput } from './QueryInput';
 import { ReasoningVisualization } from './ReasoningVisualization';
 import { QueryHistory } from './QueryHistory';
+import { ThemeToggle } from './ThemeToggle';
 import { Brain, Home } from 'lucide-react';
 import { askEpcBackend } from '../api/epcBackend';
+
+import './MainApp.css';
 
 export interface EPCStep {
   event: string;
@@ -28,18 +31,14 @@ export function MainApp() {
   const [history, setHistory] = useState<QueryResult[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const handleBackToHome = () => {
-    navigate('/');
-  };
+  const handleBackToHome = () => navigate('/');
 
   const handleQuerySubmit = async (query: string) => {
     setIsProcessing(true);
 
     try {
-      // 🔗 Call EPC LLM backend
       const aiAnswer = await askEpcBackend(query);
 
-      // 🧠 Build EPC-style result (frontend-controlled structure)
       const result: QueryResult = {
         id: Date.now().toString(),
         query,
@@ -73,8 +72,8 @@ export function MainApp() {
             ],
           },
         ],
-        finalAnswer: aiAnswer, // ✅ REAL BACKEND RESPONSE
-        confidence: 0.85,      // Static confidence for demo safety
+        finalAnswer: aiAnswer,
+        confidence: 0.85, // static for demo safety
       };
 
       setCurrentResult(result);
@@ -88,35 +87,30 @@ export function MainApp() {
     }
   };
 
-  const handleHistorySelect = (result: QueryResult) => {
-    setCurrentResult(result);
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="app-container">
+
       {/* Header */}
       <header className="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                <Brain className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl font-semibold text-slate-900">
-                  EPC Reasoning Engine
-                </h1>
-                <p className="text-sm text-slate-600">
-                  Event-Process-Condition Framework
-                </p>
-              </div>
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+              <Brain className="w-6 h-6 text-white" />
             </div>
-            <button
-              onClick={handleBackToHome}
-              className="flex items-center gap-2 px-4 py-2 text-slate-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-            >
-              <Home className="w-5 h-5" />
-              <span className="font-medium">Back to Home</span>
+            <div>
+              <h1 className="text-xl font-semibold text-slate-900">
+                EPC Reasoning Engine
+              </h1>
+              <p className="text-sm text-slate-600">
+                Event-Process-Condition Framework
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <button onClick={handleBackToHome} className="app-back-btn">
+              <Home size={16} /> Back to Home
             </button>
           </div>
         </div>
@@ -125,12 +119,12 @@ export function MainApp() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column */}
           <div className="lg:col-span-2 space-y-6">
             <QueryInput
               onSubmit={handleQuerySubmit}
               isProcessing={isProcessing}
             />
+
             {(currentResult || isProcessing) && (
               <ReasoningVisualization
                 result={currentResult}
@@ -139,11 +133,10 @@ export function MainApp() {
             )}
           </div>
 
-          {/* Right Column */}
           <div className="lg:col-span-1">
             <QueryHistory
               history={history}
-              onSelect={handleHistorySelect}
+              onSelect={setCurrentResult}
             />
           </div>
         </div>
