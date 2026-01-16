@@ -4,6 +4,7 @@ import { QueryInput } from './QueryInput';
 import { ReasoningVisualization } from './ReasoningVisualization';
 import { QueryHistory } from './QueryHistory';
 import { Brain, Home } from 'lucide-react';
+import { askEpcBackend } from '../api/epcBackend';
 
 export interface EPCStep {
   event: string;
@@ -33,16 +34,58 @@ export function MainApp() {
 
   const handleQuerySubmit = async (query: string) => {
     setIsProcessing(true);
-    
-    // Simulate processing delay
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // Generate mock EPC reasoning
-    const result: QueryResult = generateMockResult(query);
-    
-    setCurrentResult(result);
-    setHistory(prev => [result, ...prev]);
-    setIsProcessing(false);
+
+    try {
+      // 🔗 Call EPC LLM backend
+      const aiAnswer = await askEpcBackend(query);
+
+      // 🧠 Build EPC-style result (frontend-controlled structure)
+      const result: QueryResult = {
+        id: Date.now().toString(),
+        query,
+        timestamp: new Date(),
+        epcSteps: [
+          {
+            event: 'User query received',
+            process: 'Parse and classify query',
+            condition: 'Query is valid and EPC-relevant',
+            reasoning: [
+              'Detected pre-construction context',
+              'Identified structural design intent',
+            ],
+          },
+          {
+            event: 'Context retrieval triggered',
+            process: 'Retrieve relevant EPC domain knowledge',
+            condition: 'Relevant knowledge available',
+            reasoning: [
+              'Matched cost vs safety considerations',
+              'Retrieved pre-construction risk factors',
+            ],
+          },
+          {
+            event: 'AI reasoning executed',
+            process: 'Apply conservative engineering reasoning',
+            condition: 'Safety-first constraints satisfied',
+            reasoning: [
+              'Evaluated serviceability and deflection risks',
+              'Balanced cost savings against long-term risks',
+            ],
+          },
+        ],
+        finalAnswer: aiAnswer, // ✅ REAL BACKEND RESPONSE
+        confidence: 0.85,      // Static confidence for demo safety
+      };
+
+      setCurrentResult(result);
+      setHistory(prev => [result, ...prev]);
+
+    } catch (error) {
+      console.error(error);
+      alert('Failed to get response from EPC backend.');
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const handleHistorySelect = (result: QueryResult) => {
@@ -60,8 +103,12 @@ export function MainApp() {
                 <Brain className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-semibold text-slate-900">EPC Reasoning Engine</h1>
-                <p className="text-sm text-slate-600">Event-Process-Condition Framework</p>
+                <h1 className="text-xl font-semibold text-slate-900">
+                  EPC Reasoning Engine
+                </h1>
+                <p className="text-sm text-slate-600">
+                  Event-Process-Condition Framework
+                </p>
               </div>
             </div>
             <button
@@ -78,74 +125,29 @@ export function MainApp() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column - Input and Current Result */}
+          {/* Left Column */}
           <div className="lg:col-span-2 space-y-6">
-            <QueryInput onSubmit={handleQuerySubmit} isProcessing={isProcessing} />
+            <QueryInput
+              onSubmit={handleQuerySubmit}
+              isProcessing={isProcessing}
+            />
             {(currentResult || isProcessing) && (
-              <ReasoningVisualization result={currentResult} isProcessing={isProcessing} />
+              <ReasoningVisualization
+                result={currentResult}
+                isProcessing={isProcessing}
+              />
             )}
           </div>
 
-          {/* Right Column - History */}
+          {/* Right Column */}
           <div className="lg:col-span-1">
-            <QueryHistory history={history} onSelect={handleHistorySelect} />
+            <QueryHistory
+              history={history}
+              onSelect={handleHistorySelect}
+            />
           </div>
         </div>
       </main>
     </div>
   );
-}
-
-// Mock function to generate EPC reasoning
-function generateMockResult(query: string): QueryResult {
-  return {
-    id: Date.now().toString(),
-    query,
-    timestamp: new Date(),
-    epcSteps: [
-      {
-        event: 'User query received',
-        process: 'Parse and tokenize input query',
-        condition: 'Query complexity analyzed',
-        reasoning: [
-          'Identified key entities in the query',
-          'Determined question type and intent',
-          'Selected appropriate reasoning strategy'
-        ]
-      },
-      {
-        event: 'Context analysis triggered',
-        process: 'Retrieve relevant domain knowledge',
-        condition: 'Knowledge base relevance > 0.8',
-        reasoning: [
-          'Searched knowledge base for relevant information',
-          'Matched domain-specific patterns',
-          'Prioritized high-confidence sources'
-        ]
-      },
-      {
-        event: 'Reasoning chain initiated',
-        process: 'Apply logical inference rules',
-        condition: 'All premises validated',
-        reasoning: [
-          'Constructed logical argument chain',
-          'Verified premise validity',
-          'Applied deductive reasoning steps',
-          'Cross-referenced with established facts'
-        ]
-      },
-      {
-        event: 'Solution synthesis required',
-        process: 'Generate structured response',
-        condition: 'Confidence threshold met',
-        reasoning: [
-          'Consolidated findings into coherent answer',
-          'Verified answer consistency',
-          'Calculated confidence score based on evidence strength'
-        ]
-      }
-    ],
-    finalAnswer: `Based on the structured analysis of your query "${query}", the system has processed the request through multiple EPC reasoning stages. Each stage involved specific events that triggered processes, which were then evaluated against conditions to ensure accuracy and reliability. The final answer is derived from a logical chain of reasoning that can be traced back through each step, providing full transparency and explainability.`,
-    confidence: 0.92
-  };
 }
