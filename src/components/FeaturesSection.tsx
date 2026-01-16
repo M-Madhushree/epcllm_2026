@@ -1,7 +1,8 @@
 import { GitBranch, Eye, Shield, Zap, Target, LineChart } from 'lucide-react';
 import './FeaturesSection.css';
-
+import { useScrollFadeIn } from "../hooks/useScrollFadeIn";
 export function FeaturesSection() {
+  const { ref, isVisible } = useScrollFadeIn();
   const features = [
     {
       icon: GitBranch,
@@ -42,7 +43,12 @@ export function FeaturesSection() {
   ];
 
   return (
-    <section className="features-section" id="features">
+    <section
+  id="features"
+  ref={ref}
+  className={`features-section fade-section ${isVisible ? "visible" : ""}`}
+>
+
       <div className="features-container">
         <div className="features-header">
           <div className="features-badge">Features</div>
@@ -60,7 +66,8 @@ export function FeaturesSection() {
             return (
               <div 
                 key={index} 
-                className={`feature-card feature-card-${feature.color}`}
+                className={`feature-card feature-card-${feature.color} ${isVisible ? "visible" : ""}`}
+
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div className={`feature-icon feature-icon-${feature.color}`}>

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { QueryInput } from './QueryInput';
 import { ReasoningVisualization } from './ReasoningVisualization';
 import { QueryHistory } from './QueryHistory';
+import { ThemeToggle } from './ThemeToggle'
 import { Brain, Home } from 'lucide-react';
 
 export interface EPCStep {
@@ -50,9 +51,9 @@ export function MainApp() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       {/* Header */}
-      <header className="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-50">
+      <header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -60,17 +61,20 @@ export function MainApp() {
                 <Brain className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-semibold text-slate-900">EPC Reasoning Engine</h1>
-                <p className="text-sm text-slate-600">Event-Process-Condition Framework</p>
+                <h1 className="text-xl font-semibold text-slate-900 dark:text-white">EPC Reasoning Engine</h1>
+                <p className="text-sm text-slate-600 dark:text-slate-400">Event-Process-Condition Framework</p>
               </div>
             </div>
-            <button
-              onClick={handleBackToHome}
-              className="flex items-center gap-2 px-4 py-2 text-slate-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-            >
-              <Home className="w-5 h-5" />
-              <span className="font-medium">Back to Home</span>
-            </button>
+            <div className="flex items-center gap-3">
+              <ThemeToggle />
+              <button
+                onClick={handleBackToHome}
+                className="flex items-center gap-2 px-4 py-2 text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-slate-700 rounded-lg transition-colors"
+              >
+                <Home className="w-5 h-5" />
+                <span className="font-medium">Back to Home</span>
+              </button>
+            </div>
           </div>
         </div>
       </header>
