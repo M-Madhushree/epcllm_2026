@@ -29,7 +29,7 @@ class QueryResponse(BaseModel):
     answer: str
 
 # ==============================
-# API ENDPOINT (STEP 4)
+# API ENDPOINT
 # ==============================
 @app.post("/ask", response_model=QueryResponse)
 def ask_epc_ai(request: QueryRequest):
