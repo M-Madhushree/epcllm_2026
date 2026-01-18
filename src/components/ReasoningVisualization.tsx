@@ -43,9 +43,9 @@ export function ReasoningVisualization({
       </div>
 
       <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
-        <p className="text-slate-700 leading-relaxed whitespace-pre-line">
+        <div className="text-slate-700 leading-relaxed whitespace-pre-line">
           {result.finalAnswer}
-        </p>
+        </div>
       </div>
     </div>
   );
