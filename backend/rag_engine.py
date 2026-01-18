@@ -11,7 +11,7 @@ os.environ["HF_HUB_OFFLINE"] = "1"
 os.environ["TRANSFORMERS_OFFLINE"] = "1"
 
 # ==============================
-# PATHS (BACKEND-LOCAL)
+# PATHS
 # ==============================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FAISS_INDEX_DIR = os.path.join(BASE_DIR, "faiss_index")
@@ -24,27 +24,22 @@ MODEL_NAME = "phi3:mini"
 EMBED_MODEL_NAME = "all-MiniLM-L6-v2"
 
 # ==============================
-# STRICT SYSTEM PROMPT
+# SYSTEM PROMPT (LOCKED – NO STRUCTURE)
 # ==============================
 SYSTEM_PROMPT = """
 You are an EPC pre-construction reasoning assistant for low- to mid-rise residential RCC buildings.
 
 STRICT RULES:
-- Use ONLY the provided context
-- Do NOT introduce assumptions or site conditions
-- Decision support only (no execution guidance)
-- Conservative, safety-first reasoning
-- No numerical calculations
-- Keep responses concise and engineering-focused
+- Use ONLY the provided context.
+- Do NOT introduce assumptions, site conditions, codes, standards, regulations, or external engineering knowledge.
+- Do NOT discuss execution methods, construction steps, permits, materials procurement, schedules, or site readiness.
+- Do NOT explain what you cannot do or mention limitations or knowledge bases.
+- Avoid references to compliance, specifications, quality assurance, or safety standards.
+- Focus only on decision readiness, assumption clarity, risk awareness, and trade-offs.
+- Use calm, conservative, professional EPC language.
+- Write a single clear paragraph suitable for pre-construction decision review.
+- Prefer concise sentences; avoid dramatic or academic wording.
 
-Respond using EXACTLY this format:
-
-Project Context:
-Design Analysis:
-Safety Considerations:
-Cost Implications:
-Risks Identified:
-Recommendation:
 """
 
 # ==============================
@@ -58,8 +53,7 @@ embedder = SentenceTransformer(EMBED_MODEL_NAME)
 index = faiss.read_index(os.path.join(FAISS_INDEX_DIR, "index.faiss"))
 
 # ==============================
-# LOAD STORED DOCUMENT TEXTS
-# (ORDER MUST MATCH INDEX BUILD)
+# LOAD DOCUMENT TEXTS
 # ==============================
 documents = []
 for file in sorted(os.listdir(FAISS_INDEX_DIR)):
@@ -70,7 +64,7 @@ for file in sorted(os.listdir(FAISS_INDEX_DIR)):
 # ==============================
 # CONTEXT RETRIEVAL
 # ==============================
-def retrieve_context(query, k=2):
+def retrieve_context(query, k=4):
     query_embedding = embedder.encode([query])
     _, indices = index.search(query_embedding, k)
 
@@ -82,7 +76,7 @@ def retrieve_context(query, k=2):
     return "\n\n".join(contexts)
 
 # ==============================
-# LLM QUERY (CONTROLLED)
+# LLM QUERY
 # ==============================
 def query_llama(prompt):
     response = requests.post(
@@ -91,22 +85,18 @@ def query_llama(prompt):
             "model": MODEL_NAME,
             "prompt": prompt,
             "stream": True,
-            "options": {
-                "num_predict": 220
-            }
+            "options": {"num_predict": 300}
         },
         stream=True,
         timeout=120
     )
 
     answer = ""
-
     for line in response.iter_lines():
         if not line:
             continue
 
         data = json.loads(line.decode("utf-8"))
-
         if "response" in data:
             answer += data["response"]
 
@@ -116,35 +106,26 @@ def query_llama(prompt):
     return answer.strip()
 
 # ==============================
-# FULL RAG PIPELINE (GUARDED)
+# MAIN RAG PIPELINE
 # ==============================
 def run_rag(question: str) -> str:
-    # ---- HARD SAFETY GUARD ----
-    forbidden_keywords = [
-        "how to", "pour", "pouring", "on site", "site",
-        "execute", "execution", "procedure", "steps",
-        "construction method", "pcc", "rcc work"
+
+    # ---- INPUT SAFETY GUARD (NARROWED) ----
+    forbidden_terms = [
+        "how to pour",
+        "pour concrete",
+        "construction steps",
+        "construction method",
+        "execution procedure",
+        "on site"
     ]
 
-    q_lower = question.lower()
-
-    if any(word in q_lower for word in forbidden_keywords):
+    if any(term in question.lower() for term in forbidden_terms):
         return (
-            "Project Context:\n"
-            "This system is limited to EPC pre-construction decision support.\n\n"
-            "Design Analysis:\n"
-            "Execution-level construction methods fall outside the defined scope.\n\n"
-            "Safety Considerations:\n"
-            "Providing on-site construction instructions may introduce safety and liability risks.\n\n"
-            "Cost Implications:\n"
-            "Execution guidance depends on contractor methods, approvals, and site conditions.\n\n"
-            "Risks Identified:\n"
-            "Responding to execution questions could lead to unsafe or non-compliant practices.\n\n"
-            "Recommendation:\n"
-            "Please reframe the question to focus on pre-construction decisions, assumptions, or risks."
+            "This system is limited to EPC pre-construction decision support and does not provide site execution or construction method guidance."
         )
 
-    # ---- NORMAL RAG FLOW ----
+    # ---- RETRIEVE CONTEXT ----
     context = retrieve_context(question)
 
     final_prompt = f"""
@@ -155,8 +136,27 @@ Context:
 
 User Question:
 {question}
-
-Answer ONLY using the provided context and required format.
 """
 
-    return query_llama(final_prompt)
+    raw_answer = query_llama(final_prompt)
+
+    # ---- HARD OUTPUT FILTER ----
+    forbidden_output_terms = [
+        "code", "codes", "standard", "standards",
+        "seismic", "earthquake",
+        "regulation", "compliance",
+        "permit", "authority",
+        "material", "procurement",
+        "schedule", "timeline",
+        "important:", "knowledge base",
+        "site condition", "site conditions"
+
+    ]
+
+    violations = sum(term in raw_answer.lower() for term in forbidden_output_terms)
+    if violations >= 2:
+        return (
+            "Based on the available pre-construction information, the decision should be approached conservatively, as introducing unstated assumptions or external considerations at this stage may increase downstream risk."
+        )
+
+    return raw_answer
